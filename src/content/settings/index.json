@@ -1,0 +1,17 @@
+{
+  "websiteUrl": "https://iz-shop-vorschau.de",
+  "phone": "+49 89 12345678",
+  "whatsapp": "+49 89 12345678",
+  "email": "hello@iz-shop-vorschau.de",
+  "mapUrl": "https://maps.google.com/?q=M%C3%BCnchen",
+  "formspark": "todo",
+  "adress": {
+    "street": "Lindwurmstraße 99",
+    "city": "München",
+    "zip": "80337"
+  },
+  "instagram": "https://instagram.com/izdesignstudio",
+  "taxnumber": "DE123456789",
+  "name": "iZ Design Studio",
+  "companyName": "iZ Design Studio"
+}
