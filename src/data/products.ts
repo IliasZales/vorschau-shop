@@ -41,8 +41,8 @@ export const products: Product[] = [
     price: 289,
     currency: "EUR",
     images: [
-      "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1532344214108-1b6d425db572?q=80&w=1200&auto=format&fit=crop",
     ],
     features: [
       "Fuß aus geöltem Eschenholz",
@@ -70,8 +70,8 @@ export const products: Product[] = [
     price: 429,
     currency: "EUR",
     images: [
-      "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1759647020559-2f91a4290ae4?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1630578877871-1a2f9d372fd2?q=80&w=1200&auto=format&fit=crop",
     ],
     features: [
       "Handgefertigter Leinenschirm in Sandton",
