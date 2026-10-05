@@ -1,5 +1,7 @@
 ---
-import Layout from "./Layout.astro";
+import BaseLayout from "./BaseLayout.astro";
+import CookieConsent from "../components/cookies/CookieConsent.astro";
+import Footer from "../components/Footer.astro";
 import ShopNavigation from "../components/shop/ShopNavigation.astro";
 import ShopPasswordGate from "../components/shop/ShopPasswordGate.astro";
 
@@ -11,10 +13,12 @@ interface Props {
 const { title, description } = Astro.props;
 ---
 
-<Layout title={title} description={description} robots="noindex, nofollow">
+<BaseLayout title={title} description={description} robots="noindex, nofollow">
   <ShopPasswordGate />
   <ShopNavigation />
-  <div class="pt-20">
+  <main class="pt-20">
     <slot />
-  </div>
-</Layout>
+  </main>
+  <Footer />
+  <CookieConsent />
+</BaseLayout>
