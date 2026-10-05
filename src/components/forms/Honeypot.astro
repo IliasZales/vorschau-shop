@@ -1,0 +1,61 @@
+---
+
+---
+
+<div class="with_ani" aria-hidden="true">
+  <input
+    type="text"
+    name="_gotcha"
+    id="_gotcha"
+    tabindex="-1"
+    autocomplete="off"
+  />
+  <input type="text" name="phone_number" tabindex="-1" autocomplete="off" />
+  <input type="email" name="email_address" tabindex="-1" autocomplete="off" />
+  <input type="checkbox" name="urgent" tabindex="-1" autocomplete="off" />
+  <input type="hidden" name="_redirect" value="https://todo/danke" />
+</div>
+
+<style>
+  .with_ani {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+</style>
+
+<script>
+  function validateHoneypot(form: HTMLFormElement) {
+    const honeypotFields = ["_gotcha", "phone_number", "email_address"];
+
+    for (const fieldName of honeypotFields) {
+      const field = form.querySelector(
+        `[name="${fieldName}"]`
+      ) as HTMLInputElement;
+      if (field && field.value) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const forms = document.querySelectorAll("form");
+
+    forms.forEach((form) => {
+      form.addEventListener("submit", (e) => {
+        if (!validateHoneypot(form)) {
+          e.preventDefault();
+          console.log("Bot submission prevented");
+          return false;
+        }
+      });
+    });
+  });
+</script>

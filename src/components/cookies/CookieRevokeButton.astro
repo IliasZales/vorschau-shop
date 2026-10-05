@@ -1,0 +1,25 @@
+---
+import { COOKIE_NAME } from "./constants";
+---
+
+<button
+  id="revoke-cookies"
+  class="px-4 py-2 text-sm bg-black text-white hover:bg-gray-800 border border-gray-300 rounded-md transition-colors duration-200 hover:border-gray-400"
+>
+  Cookie-Einstellungen zurücksetzen
+</button>
+
+<script define:vars={{ COOKIE_NAME }}>
+  function initCookieRevoke() {
+    const revokeButton = document.getElementById("revoke-cookies");
+    const cookieConsent = document.getElementById("cookie-consent");
+
+    revokeButton.addEventListener("click", () => {
+      localStorage.removeItem(COOKIE_NAME);
+      revokeButton.innerText = "Cookies für diese Seiten wurden entfernt.";
+      cookieConsent.classList.remove("translate-y-full");
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", initCookieRevoke);
+</script>

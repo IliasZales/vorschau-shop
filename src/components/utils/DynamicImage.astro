@@ -1,0 +1,131 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import path from "path";
+import * as fs from "fs/promises";
+
+interface Props {
+  loading?: "lazy" | "eager";
+  classes?: string;
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  isAi?: boolean;
+}
+
+const {
+  src,
+  alt,
+  classes,
+  width,
+  height,
+  loading = "lazy",
+  isAi = false,
+  ...rest
+} = Astro.props;
+
+async function downloadImage(url: string, destPath: string): Promise<void> {
+  console.log("Downloading image from URL: ", url);
+  const response = await fetch(url);
+  const arrayBuffer = await response.arrayBuffer();
+  const uint8Array = new Uint8Array(arrayBuffer);
+  await fs.writeFile(destPath, uint8Array);
+}
+
+let imageSrc = src;
+
+if (src.startsWith("http://") || src.startsWith("https://")) {
+  const fileName = path.basename(new URL(src).pathname) + ".avif";
+
+  const localPath = `/src/images/${fileName}`;
+  const fullPath = path.join(process.cwd(), "src", "images", fileName);
+
+  try {
+    await fs.access(fullPath);
+    console.log(`File ${fileName} already exists, skipping download`);
+    console.log("URL: ", src);
+  } catch (error) {
+    await downloadImage(src, fullPath);
+    console.log(`Downloaded new file ${fileName}`);
+  }
+
+  imageSrc = localPath;
+}
+
+const images = import.meta.glob<{ default: ImageMetadata }>(
+  "/src/images/*.{jpeg,jpg,png,gif,avif}"
+);
+if (!images[imageSrc])
+  throw new Error(
+    `"${imageSrc}" does not exist in glob: "src/images/*.{jpeg,jpg,png,gif,avif}"`
+  );
+---
+
+{isAi ? (
+  <span
+    data-ki-wrapper
+    class="group/ki relative inline-block"
+  >
+    <Image
+      {...rest}
+      loading={loading}
+      src={images[imageSrc]()}
+      alt={alt}
+      class={classes}
+      width={width}
+      height={height}
+    />
+    <button
+      type="button"
+      class="ki-badge absolute top-2 right-2 z-10 flex h-6 min-w-6 items-center justify-center rounded-full border border-white/30 bg-neutral-900/80 px-1.5 text-[11px] font-semibold tracking-wide text-white shadow-sm transition-colors hover:bg-neutral-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
+      aria-label="KI-Hinweis: Was bedeutet das?"
+    >
+      KI
+    </button>
+    <span
+      role="tooltip"
+      class="ki-tooltip pointer-events-none absolute top-full right-0 z-10 mt-2 w-max max-w-[220px] rounded-lg bg-neutral-900 p-3 text-xs leading-snug text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover/ki:opacity-100 group-focus-within/ki:opacity-100"
+    >
+      Dieses Bild wurde mit Hilfe von Künstlicher Intelligenz (KI) erstellt.
+    </span>
+  </span>
+) : (
+  <Image
+    {...rest}
+    loading={loading}
+    src={images[imageSrc]()}
+    alt={alt}
+    class={classes}
+    width={width}
+    height={height}
+  />
+)}
+
+<script>
+  const closeAll = () => {
+    document
+      .querySelectorAll("[data-ki-wrapper][data-ki-open]")
+      .forEach((wrapper) => wrapper.removeAttribute("data-ki-open"));
+  };
+
+  document.querySelectorAll<HTMLElement>(".ki-badge").forEach((badge) => {
+    badge.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const wasOpen = badge
+        .closest<HTMLElement>("[data-ki-wrapper]")
+        ?.hasAttribute("data-ki-open");
+      closeAll();
+      if (!wasOpen)
+        badge.closest<HTMLElement>("[data-ki-wrapper]")?.setAttribute("data-ki-open", "");
+    });
+  });
+
+  document.addEventListener("click", closeAll);
+</script>
+
+<style>
+  [data-ki-wrapper][data-ki-open] .ki-tooltip {
+    opacity: 1;
+  }
+</style>
