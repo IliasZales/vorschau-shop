@@ -1,0 +1,61 @@
+---
+import { formatPrice } from "../../data/products";
+
+interface Props {
+  subtotal: number;
+  shipping: number;
+  currency: string;
+  buttonHref?: string;
+  buttonText?: string;
+  readonly?: boolean;
+}
+
+const {
+  subtotal,
+  shipping,
+  currency,
+  buttonHref,
+  buttonText = "Weiter",
+  readonly = false,
+} = Astro.props;
+
+const total = subtotal + shipping;
+---
+
+<div class="bg-[var(--color-surface)] p-6 md:p-8" data-cart-summary>
+  <h2 class="mb-6 font-display text-2xl font-medium text-[var(--color-text)]">
+    Zusammenfassung
+  </h2>
+  <dl class="space-y-4 text-sm">
+    <div class="flex justify-between text-[var(--color-text-muted)]">
+      <dt>Zwischensumme</dt>
+      <dd id="summary-subtotal" class="font-medium text-[var(--color-text)]">{formatPrice(subtotal, currency)}</dd>
+    </div>
+    <div class="flex justify-between text-[var(--color-text-muted)]">
+      <dt>Versand</dt>
+      <dd class="font-medium text-[var(--color-text)]">
+        {shipping === 0 ? "Kostenlos" : formatPrice(shipping, currency)}
+      </dd>
+    </div>
+    <div class="border-t border-[var(--color-border)] pt-4">
+      <div class="flex justify-between text-lg font-medium text-[var(--color-text)]">
+        <dt>Gesamtsumme</dt>
+        <dd id="summary-total">{formatPrice(total, currency)}</dd>
+      </div>
+      <p class="mt-1 text-right text-xs text-[var(--color-text-muted)]">
+        Inkl. MwSt.
+      </p>
+    </div>
+  </dl>
+
+  {
+    buttonHref && !readonly && (
+      <a
+        href={buttonHref}
+        class="mt-8 inline-flex w-full items-center justify-center bg-[var(--color-text)] px-8 py-4 text-sm font-medium uppercase tracking-wider text-white transition hover:bg-[var(--color-accent)]"
+      >
+        {buttonText}
+      </a>
+    )
+  }
+</div>
