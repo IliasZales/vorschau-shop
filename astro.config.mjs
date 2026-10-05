@@ -12,5 +12,10 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  integrations: [mdx(), sitemap()]
+  integrations: [
+    mdx(),
+    sitemap({
+      filter: (page) => !page.startsWith("https://iz-shop-vorschau.de/shop/"),
+    }),
+  ],
 });
