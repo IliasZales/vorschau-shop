@@ -1,0 +1,116 @@
+---
+interface Props {
+  id: string;
+  slug: string;
+  name: string;
+  price: number;
+  currency: string;
+  image: string;
+}
+
+const { id, slug, name, price, currency, image } = Astro.props;
+---
+
+<div class="flex flex-wrap items-center gap-4" data-add-to-cart>
+  <div class="flex items-center border border-[var(--color-border)] bg-[var(--color-surface)]">
+    <button
+      type="button"
+      class="quantity-decrease px-4 py-3 text-[var(--color-text-muted)] transition hover:text-[var(--color-text)]"
+      aria-label="Menge verringern"
+    >
+      −
+    </button>
+    <span
+      class="quantity-display min-w-[2.5rem] select-none text-center text-sm font-medium text-[var(--color-text)]"
+      aria-live="polite"
+    >
+      1
+    </span>
+    <button
+      type="button"
+      class="quantity-increase px-4 py-3 text-[var(--color-text-muted)] transition hover:text-[var(--color-text)]"
+      aria-label="Menge erhöhen"
+    >
+      +
+    </button>
+  </div>
+
+  <button
+    type="button"
+    class="add-to-cart inline-flex flex-1 items-center justify-center bg-[var(--color-text)] px-8 py-3.5 text-sm font-medium uppercase tracking-wider text-white transition hover:bg-[var(--color-accent)]"
+    data-id={id}
+    data-slug={slug}
+    data-name={name}
+    data-price={price}
+    data-currency={currency}
+    data-image={image}
+  >
+    <span class="add-to-cart-label">In den Warenkorb</span>
+    <span class="add-to-cart-success hidden items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
+        <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+      </svg>
+      Hinzugefügt
+    </span>
+  </button>
+</div>
+
+<script>
+  import { addToCart } from "../../lib/cart";
+
+  (function () {
+    const wrappers = document.querySelectorAll<HTMLElement>("[data-add-to-cart]");
+
+    wrappers.forEach((wrapper) => {
+      const decrease = wrapper.querySelector<HTMLButtonElement>(".quantity-decrease");
+      const increase = wrapper.querySelector<HTMLButtonElement>(".quantity-increase");
+      const display = wrapper.querySelector<HTMLSpanElement>(".quantity-display");
+      const button = wrapper.querySelector<HTMLButtonElement>(".add-to-cart");
+      const label = wrapper.querySelector<HTMLSpanElement>(".add-to-cart-label");
+      const success = wrapper.querySelector<HTMLSpanElement>(".add-to-cart-success");
+
+      let quantity = 1;
+
+      function updateDisplay() {
+        if (display) display.textContent = String(quantity);
+      }
+
+      decrease?.addEventListener("click", () => {
+        if (quantity > 1) quantity--;
+        updateDisplay();
+      });
+
+      increase?.addEventListener("click", () => {
+        quantity++;
+        updateDisplay();
+      });
+
+      button?.addEventListener("click", () => {
+        if (!button) return;
+        addToCart({
+          id: button.dataset.id!,
+          slug: button.dataset.slug!,
+          name: button.dataset.name!,
+          price: Number(button.dataset.price),
+          currency: button.dataset.currency!,
+          image: button.dataset.image!,
+          quantity,
+        });
+
+        if (label && success) {
+          label.classList.add("hidden");
+          success.classList.remove("hidden");
+          success.classList.add("inline-flex");
+          setTimeout(() => {
+            label.classList.remove("hidden");
+            success.classList.add("hidden");
+            success.classList.remove("inline-flex");
+          }, 1800);
+        }
+
+        quantity = 1;
+        updateDisplay();
+      });
+    });
+  })();
+</script>

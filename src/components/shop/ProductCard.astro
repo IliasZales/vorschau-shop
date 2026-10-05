@@ -1,0 +1,38 @@
+---
+import DynamicImage from "../utils/DynamicImage.astro";
+import { formatPrice } from "../../data/products";
+import type { Product } from "../../data/shopTypes";
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+---
+
+<a
+  href={`/shop/produkt/${product.slug}`}
+  class="group block overflow-hidden bg-[var(--color-surface)] transition"
+>
+  <div class="aspect-[4/5] overflow-hidden bg-[var(--color-bg)]">
+    <DynamicImage
+      src={product.images[0]}
+      alt={product.name}
+      width={600}
+      height={750}
+      classes="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+      isAi
+    />
+  </div>
+  <div class="space-y-2 pt-5">
+    <p class="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-text-muted)]">
+      {product.tagline}
+    </p>
+    <h3 class="font-display text-2xl font-medium text-[var(--color-text)]">
+      {product.name}
+    </h3>
+    <p class="text-lg font-medium text-[var(--color-accent)]">
+      {formatPrice(product.price, product.currency)}
+    </p>
+  </div>
+</a>

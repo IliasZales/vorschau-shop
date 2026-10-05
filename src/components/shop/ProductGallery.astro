@@ -1,0 +1,71 @@
+---
+import DynamicImage from "../utils/DynamicImage.astro";
+
+interface Props {
+  images: string[];
+  alt: string;
+}
+
+const { images, alt } = Astro.props;
+const [mainImage, ...thumbnails] = images;
+---
+
+<div class="space-y-4">
+  <div class="aspect-[4/5] overflow-hidden bg-[var(--color-bg)]">
+    <DynamicImage
+      id="product-main-image"
+      src={mainImage}
+      alt={alt}
+      width={800}
+      height={1000}
+      classes="h-full w-full object-cover"
+      loading="eager"
+      isAi
+    />
+  </div>
+
+  {
+    thumbnails.length > 0 && (
+      <div class="flex gap-3">
+        {thumbnails.map((image, index) => (
+          <button
+            type="button"
+            class="product-thumbnail aspect-square w-20 overflow-hidden border-2 border-transparent bg-[var(--color-bg)] transition hover:border-[var(--color-accent)] focus:border-[var(--color-accent)]"
+            data-image={image}
+            data-alt={`${alt} – Ansicht ${index + 2}`}
+            aria-label={`Ansicht ${index + 2} anzeigen`}
+          >
+            <DynamicImage
+              src={image}
+              alt={`${alt} – Ansicht ${index + 2}`}
+              width={120}
+              height={120}
+              classes="h-full w-full object-cover"
+              isAi
+            />
+          </button>
+        ))}
+      </div>
+    )
+  }
+</div>
+
+<script>
+  (function () {
+    const mainImage = document.getElementById("product-main-image") as HTMLImageElement | null;
+    const thumbnails = document.querySelectorAll<HTMLElement>(".product-thumbnail");
+
+    thumbnails.forEach((thumb) => {
+      thumb.addEventListener("click", () => {
+        if (!mainImage) return;
+        const newSrc = thumb.dataset.image;
+        const newAlt = thumb.dataset.alt;
+        if (newSrc) {
+          mainImage.src = newSrc;
+          mainImage.srcset = "";
+        }
+        if (newAlt) mainImage.alt = newAlt;
+      });
+    });
+  })();
+</script>
