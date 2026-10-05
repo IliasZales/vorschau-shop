@@ -1,0 +1,43 @@
+---
+import ShopLayout from "../../layouts/ShopLayout.astro";
+---
+
+<ShopLayout
+  title="Vielen Dank | iZ Shop-Vorschau"
+  description="Danke für deine Test-Bestellung im iZ Shop-Vorschau."
+>
+  <div class="flex min-h-[60vh] items-center justify-center px-6 py-20 lg:px-8">
+    <div class="max-w-xl text-center">
+      <div class="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-8 w-8">
+          <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+        </svg>
+      </div>
+
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-accent)]">
+        Demo-Bestellung eingegangen
+      </p>
+      <h1 class="mt-4 font-display text-4xl font-medium text-[var(--color-text)] md:text-5xl">
+        Vielen Dank!
+      </h1>
+      <p class="mt-4 text-lg leading-relaxed text-[var(--color-text-muted)]">
+        Dies war eine Vorschau-Bestellung. In der fertigen Version würde hier die Zahlungsabwicklung folgen.
+      </p>
+
+      <div class="mt-10 flex flex-wrap justify-center gap-4">
+        <a
+          href="/shop"
+          class="inline-flex items-center justify-center bg-[var(--color-text)] px-8 py-4 text-sm font-medium uppercase tracking-wider text-white transition hover:bg-[var(--color-accent)]"
+        >
+          Zurück zum Shop
+        </a>
+        <a
+          href="/"
+          class="inline-flex items-center justify-center border border-[var(--color-text)] px-8 py-4 text-sm font-medium uppercase tracking-wider text-[var(--color-text)] transition hover:bg-[var(--color-text)] hover:text-white"
+        >
+          Zur Website
+        </a>
+      </div>
+    </div>
+  </div>
+</ShopLayout>

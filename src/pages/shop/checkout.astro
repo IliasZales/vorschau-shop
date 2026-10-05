@@ -1,0 +1,94 @@
+---
+import ShopLayout from "../../layouts/ShopLayout.astro";
+import CartSummary from "../../components/shop/CartSummary.astro";
+import TestAccountLogin from "../../components/shop/TestAccountLogin.astro";
+import CheckoutForm from "../../components/shop/CheckoutForm.astro";
+import { products } from "../../data/products";
+
+const product = products[0];
+const currency = product.currency;
+---
+
+<ShopLayout
+  title="Checkout | iZ Shop-Vorschau"
+  description="Checkout im iZ Shop-Vorschau."
+>
+  <div class="px-6 pt-12 pb-20 lg:px-8 lg:pt-16 lg:pb-28">
+    <div class="mx-auto max-w-7xl">
+      <h1 class="mb-10 font-display text-4xl font-medium text-[var(--color-text)] md:text-5xl">
+        Checkout
+      </h1>
+
+      <div class="grid gap-12 lg:grid-cols-[1fr_380px]">
+        <div class="space-y-10">
+          <TestAccountLogin />
+
+          <div class="border-t border-[var(--color-border)] pt-10">
+            <h2 class="mb-6 font-display text-2xl font-medium text-[var(--color-text)]">
+              Lieferadresse
+            </h2>
+            <CheckoutForm />
+          </div>
+        </div>
+
+        <aside class="h-fit space-y-6">
+          <CartSummary
+            subtotal={0}
+            shipping={5.9}
+            currency={currency}
+            readonly
+          />
+          <p class="text-xs leading-relaxed text-[var(--color-text-muted)]">
+            Dies ist eine reine Vorschau. Es wird keine echte Zahlung durchgeführt und keine Bestellung ausgelöst.
+          </p>
+        </aside>
+      </div>
+    </div>
+  </div>
+</ShopLayout>
+
+<script>
+  import { getCartTotal } from "../../lib/cart";
+  import { processOrder } from "../../lib/checkout";
+
+  (function () {
+    const subtotal = getCartTotal();
+    const shipping = 5.9;
+    const total = subtotal + shipping;
+
+    const subtotalEl = document.getElementById("summary-subtotal");
+    const totalEl = document.getElementById("summary-total");
+    if (subtotalEl) subtotalEl.textContent = formatPrice(subtotal, "EUR");
+    if (totalEl) totalEl.textContent = formatPrice(total, "EUR");
+
+    function formatPrice(price: number, currency: string): string {
+      return new Intl.NumberFormat("de-DE", {
+        style: "currency",
+        currency,
+      }).format(price);
+    }
+
+    const form = document.getElementById("checkout-form") as HTMLFormElement | null;
+    const submitButton = document.getElementById("checkout-submit") as HTMLButtonElement | null;
+    const error = document.getElementById("checkout-error");
+
+    form?.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      if (!form.checkValidity()) {
+        error?.classList.remove("hidden");
+        form.reportValidity();
+        return;
+      }
+
+      error?.classList.add("hidden");
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Wird bearbeitet...";
+      }
+
+      const formData = new FormData(form);
+      processOrder(formData);
+    });
+  })();
+</script>
