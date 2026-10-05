@@ -1,0 +1,170 @@
+---
+import { getEntry } from "astro:content";
+import DynamicImage from "./utils/DynamicImage.astro";
+
+const entry = await getEntry("settings", "index");
+const { email, phone } = entry!.data;
+
+const navLinks = [
+  { href: "/", label: "Home" },
+  { href: "/projekte", label: "Projekte" },
+  { href: "/leistungen", label: "Leistungen" },
+  { href: "/kontakt", label: "Kontakt" },
+  { href: "/shop", label: "Shop", badge: "Vorschau" },
+];
+---
+
+<header
+  id="main-header"
+  class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm transition-all duration-500 opacity-0"
+>
+  <nav class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="flex h-20 items-center justify-between">
+      <div class="flex-shrink-0">
+        <a href="/" class="text-2xl font-semibold text-gray-900">
+          <DynamicImage
+            src="/src/images/logo.png"
+            width={100}
+            height={100}
+            alt="Logo"
+          />
+        </a>
+      </div>
+      <div class="hidden md:flex md:items-center md:space-x-12">
+        {
+          navLinks.map((link) => (
+            <a
+              href={link.href}
+              class="flex items-center gap-2 text-sm font-medium text-gray-700 transition hover:text-gray-900"
+            >
+              {link.label}
+              {link.badge && (
+                <span class="rounded-full bg-[var(--color-accent)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
+                  {link.badge}
+                </span>
+              )}
+            </a>
+          ))
+        }
+      </div>
+      <div class="hidden md:flex md:items-center md:space-x-6">
+        <a
+          href={`tel:${phone}`}
+          class="text-sm font-medium text-gray-700 transition hover:text-gray-900"
+        >
+          {phone}
+        </a>
+        <a
+          href={`mailto:${email}`}
+          class="text-sm font-medium text-gray-700 transition hover:text-gray-900"
+        >
+          {email}
+        </a>
+      </div>
+      <button
+        type="button"
+        class="md:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:text-gray-900"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+        id="mobile-menu-button"
+      >
+        <span class="sr-only">Open main menu</span>
+        <svg
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path>
+        </svg>
+      </button>
+    </div>
+    <div
+      class="md:hidden hidden transition-all duration-300 ease-in-out"
+      id="mobile-menu"
+    >
+      <div class="space-y-4 px-2 pb-6 pt-2">
+        {
+          navLinks.map((link) => (
+            <a
+              href={link.href}
+              class="flex items-center gap-2 text-base font-medium text-gray-700 transition hover:text-gray-900"
+            >
+              {link.label}
+              {link.badge && (
+                <span class="rounded-full bg-[var(--color-accent)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
+                  {link.badge}
+                </span>
+              )}
+            </a>
+          ))
+        }
+        <div class="mt-6 space-y-3">
+          <a
+            href={`tel:${phone}`}
+            class="block text-base font-medium text-gray-700 transition hover:text-gray-900"
+          >
+            {phone}
+          </a>
+          <a
+            href={`mailto:${email}`}
+            class="block text-base font-medium text-gray-700 transition hover:text-gray-900"
+          >
+            {email}
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const header = document.getElementById("main-header");
+    if (header) {
+      setTimeout(() => {
+        header.classList.remove("opacity-0");
+      }, 500);
+    }
+  });
+
+  const mobileMenuButton = document.getElementById("mobile-menu-button");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener("click", () => {
+      const expanded =
+        mobileMenuButton.getAttribute("aria-expanded") === "true";
+      mobileMenuButton.setAttribute("aria-expanded", (!expanded).toString());
+      mobileMenu.classList.toggle("hidden");
+    });
+  }
+
+  let lastScroll = 0;
+  const header = document.getElementById("main-header");
+
+  window.addEventListener("scroll", () => {
+    if (!header) return;
+
+    const currentScroll = window.pageYOffset;
+    if (currentScroll <= 0) {
+      header.classList.remove("-translate-y-full");
+      header.classList.remove("shadow-lg");
+      return;
+    }
+
+    if (currentScroll > lastScroll && currentScroll > 80) {
+      header.classList.add("-translate-y-full");
+    } else {
+      header.classList.remove("-translate-y-full");
+      header.classList.add("shadow-lg");
+    }
+
+    lastScroll = currentScroll;
+  });
+</script>

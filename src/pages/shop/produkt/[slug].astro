@@ -1,0 +1,93 @@
+---
+import ShopLayout from "../../../layouts/ShopLayout.astro";
+import ProductGallery from "../../../components/shop/ProductGallery.astro";
+import AddToCart from "../../../components/shop/AddToCart.astro";
+import { products, getProductBySlug, formatPrice } from "../../../data/products";
+
+export function getStaticPaths() {
+  return products.map((product) => ({
+    params: { slug: product.slug },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props;
+---
+
+<ShopLayout
+  title={`${product.name} | iZ Shop-Vorschau`}
+  description={product.tagline}
+>
+  <div class="px-6 pt-12 pb-20 lg:px-8 lg:pt-16 lg:pb-28">
+    <div class="mx-auto max-w-7xl">
+      <nav aria-label="Breadcrumb" class="mb-10">
+        <ol class="flex flex-wrap items-center gap-2 text-sm text-[var(--color-text-muted)]">
+          <li><a href="/shop" class="transition hover:text-[var(--color-text)]">Shop</a></li>
+          <li aria-hidden="true">/</li>
+          <li class="text-[var(--color-text)]">{product.name}</li>
+        </ol>
+      </nav>
+
+      <div class="grid gap-12 lg:grid-cols-2 lg:gap-20">
+        <ProductGallery images={product.images} alt={product.name} />
+
+        <div class="space-y-8 lg:pt-8">
+          <div class="space-y-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-accent)]">
+              {product.tagline}
+            </p>
+            <h1 class="font-display text-4xl font-medium text-[var(--color-text)] md:text-5xl">
+              {product.name}
+            </h1>
+            <p class="text-3xl font-light text-[var(--color-text)]">
+              {formatPrice(product.price, product.currency)}
+            </p>
+          </div>
+
+          <p class="leading-relaxed text-[var(--color-text-muted)]">
+            {product.description}
+          </p>
+
+          <AddToCart
+            id={product.id}
+            slug={product.slug}
+            name={product.name}
+            price={product.price}
+            currency={product.currency}
+            image={product.images[0]}
+          />
+
+          <div class="border-t border-[var(--color-border)] pt-8">
+            <h2 class="mb-4 font-display text-xl font-medium text-[var(--color-text)]">
+              Highlights
+            </h2>
+            <ul class="space-y-2">
+              {product.features.map((feature) => (
+                <li class="flex items-start gap-3 text-[var(--color-text-muted)]">
+                  <span class="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--color-accent)]" aria-hidden="true"></span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="border-t border-[var(--color-border)] pt-8">
+            <h2 class="mb-4 font-display text-xl font-medium text-[var(--color-text)]">
+              Details
+            </h2>
+            <dl class="grid gap-3 sm:grid-cols-2">
+              {product.specs.map((spec) => (
+                <div class="border-b border-[var(--color-border)] pb-3">
+                  <dt class="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+                    {spec.label}
+                  </dt>
+                  <dd class="mt-1 text-[var(--color-text)]">{spec.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ShopLayout>

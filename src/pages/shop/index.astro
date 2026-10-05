@@ -1,0 +1,110 @@
+---
+import ShopLayout from "../../layouts/ShopLayout.astro";
+import ProductCard from "../../components/shop/ProductCard.astro";
+import { products } from "../../data/products";
+
+const heroProduct = products[0];
+---
+
+<ShopLayout
+  title="Shop-Vorschau | iZ Design Studio"
+  description="Entdecke unsere Shop-Vorschau mit einem Beispielprodukt, elegantem Layout und vollständigem Checkout-Flow."
+>
+  <section class="relative overflow-hidden px-6 pt-24 pb-20 lg:px-8 lg:pt-32 lg:pb-28">
+    <div class="mx-auto max-w-7xl">
+      <div class="grid gap-12 lg:grid-cols-2 lg:items-center">
+        <div class="max-w-xl space-y-8">
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-accent)]">
+            Vorschau-Shop
+          </p>
+          <h1 class="font-display text-5xl font-medium leading-[1.1] text-[var(--color-text)] md:text-6xl lg:text-7xl">
+            Design, das verkauft.
+          </h1>
+          <p class="text-lg leading-relaxed text-[var(--color-text-muted)]">
+            So könnte dein Shop aussehen: klare Hierarchie, edle Typografie, durchdachte Produktdarstellung und ein reibungsloser Checkout.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <a
+              href={`/shop/produkt/${heroProduct.slug}`}
+              class="inline-flex items-center justify-center bg-[var(--color-text)] px-8 py-4 text-sm font-medium uppercase tracking-wider text-white transition hover:bg-[var(--color-accent)]"
+            >
+              Produkt entdecken
+            </a>
+            <a
+              href="/shop/warenkorb"
+              class="inline-flex items-center justify-center border border-[var(--color-text)] px-8 py-4 text-sm font-medium uppercase tracking-wider text-[var(--color-text)] transition hover:bg-[var(--color-text)] hover:text-white"
+            >
+              Warenkorb ansehen
+            </a>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div class="absolute -top-8 -right-8 h-32 w-32 rounded-full bg-[var(--color-accent)]/10 blur-2xl" aria-hidden="true"></div>
+          <ProductCard product={heroProduct} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-20 lg:px-8 lg:py-28">
+    <div class="mx-auto max-w-7xl">
+      <div class="mb-16 max-w-2xl">
+        <h2 class="font-display text-3xl font-medium text-[var(--color-text)] md:text-4xl">
+          Was dieser Shop bietet
+        </h2>
+      </div>
+      <div class="grid gap-8 md:grid-cols-3">
+        {
+          [
+            {
+              title: "Ästhetische Produktdarstellung",
+              text: "Große Bilder, klare Typografie und ruhige Layouts lenken den Blick auf das Produkt.",
+            },
+            {
+              title: "Warenkorb & Checkout",
+              text: "Vollständiger Einkaufsflow mit Mengenänderung, Zusammenfassung und Test-Account.",
+            },
+            {
+              title: "Passwortgeschützte Vorschau",
+              text: "Nur mit Passwort einsehbar – perfekt, um Kunden einen exklusiven ersten Blick zu geben.",
+            },
+          ].map((feature) => (
+            <div class="space-y-3">
+              <h3 class="font-display text-xl font-medium text-[var(--color-text)]">
+                {feature.title}
+              </h3>
+              <p class="leading-relaxed text-[var(--color-text-muted)]">{feature.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="px-6 py-20 lg:px-8 lg:py-28">
+    <div class="mx-auto max-w-7xl">
+      <div class="mb-12 flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-accent)]">
+            Kollektion
+          </p>
+          <h2 class="mt-2 font-display text-3xl font-medium text-[var(--color-text)] md:text-4xl">
+            Ausgewähltes Beispielprodukt
+          </h2>
+        </div>
+        <a
+          href={`/shop/produkt/${heroProduct.slug}`}
+          class="text-sm font-medium text-[var(--color-text)] underline decoration-[var(--color-accent)] underline-offset-4 transition hover:text-[var(--color-accent)]"
+        >
+          Alle Details
+        </a>
+      </div>
+      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {products.map((product) => (
+          <ProductCard product={product} />
+        ))}
+      </div>
+    </div>
+  </section>
+</ShopLayout>
