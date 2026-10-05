@@ -1,0 +1,138 @@
+---
+const navLinks = [
+  { href: "/shop", label: "Shop" },
+  { href: "/shop/warenkorb", label: "Warenkorb" },
+  { href: "/shop/checkout", label: "Checkout" },
+];
+---
+
+<header
+  id="shop-header"
+  class="fixed top-0 left-0 right-0 z-50 bg-[var(--color-bg)]/95 backdrop-blur-sm transition-all duration-500 border-b border-[var(--color-border)]"
+>
+  <nav class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="flex h-20 items-center justify-between">
+      <a href="/shop" class="font-display text-2xl font-medium text-[var(--color-text)]">
+        iZ Shop
+      </a>
+
+      <div class="hidden items-center space-x-10 md:flex">
+        {
+          navLinks.map((link) => (
+            <a
+              href={link.href}
+              class="text-sm font-medium text-[var(--color-text-muted)] transition hover:text-[var(--color-text)]"
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="flex items-center gap-4">
+        <a
+          href="/shop/warenkorb"
+          class="group relative inline-flex items-center justify-center p-2 text-[var(--color-text)]"
+          aria-label="Warenkorb"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="h-6 w-6 transition group-hover:text-[var(--color-accent)]"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"
+            />
+          </svg>
+          <span
+            id="cart-count"
+            class="absolute -top-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-accent)] text-[10px] font-semibold text-white opacity-0 transition-opacity"
+          >
+            0
+          </span>
+        </a>
+
+        <button
+          type="button"
+          class="inline-flex items-center justify-center p-2 text-[var(--color-text)] md:hidden"
+          aria-controls="shop-mobile-menu"
+          aria-expanded="false"
+          id="shop-mobile-menu-button"
+        >
+          <span class="sr-only">Menü öffnen</span>
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div
+      class="md:hidden hidden border-t border-[var(--color-border)] pb-6 pt-4"
+      id="shop-mobile-menu"
+    >
+      <div class="space-y-3">
+        {
+          navLinks.map((link) => (
+            <a
+              href={link.href}
+              class="block text-base font-medium text-[var(--color-text-muted)] transition hover:text-[var(--color-text)]"
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  (function () {
+    const cartCount = document.getElementById("cart-count");
+
+    function updateCount() {
+      if (!cartCount) return;
+      try {
+        const cart = JSON.parse(localStorage.getItem("iz-shop-cart") || "[]");
+        const count = cart.reduce((sum: number, item: { quantity: number }) => sum + item.quantity, 0);
+        cartCount.textContent = String(count);
+        cartCount.classList.toggle("opacity-0", count === 0);
+      } catch {
+        cartCount.classList.add("opacity-0");
+      }
+    }
+
+    updateCount();
+    window.addEventListener("cart:updated", updateCount);
+    window.addEventListener("storage", updateCount);
+
+    // Mobile menu toggle
+    const button = document.getElementById("shop-mobile-menu-button");
+    const menu = document.getElementById("shop-mobile-menu");
+    if (button && menu) {
+      button.addEventListener("click", () => {
+        const expanded = button.getAttribute("aria-expanded") === "true";
+        button.setAttribute("aria-expanded", String(!expanded));
+        menu.classList.toggle("hidden");
+      });
+    }
+  })();
+</script>

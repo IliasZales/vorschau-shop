@@ -1,0 +1,20 @@
+---
+import Layout from "./Layout.astro";
+import ShopNavigation from "../components/shop/ShopNavigation.astro";
+import ShopPasswordGate from "../components/shop/ShopPasswordGate.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<Layout title={title} description={description} robots="noindex, nofollow">
+  <ShopPasswordGate />
+  <ShopNavigation />
+  <div class="pt-20">
+    <slot />
+  </div>
+</Layout>
