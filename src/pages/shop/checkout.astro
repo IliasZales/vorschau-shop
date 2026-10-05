@@ -3,10 +3,7 @@ import ShopLayout from "../../layouts/ShopLayout.astro";
 import CartSummary from "../../components/shop/CartSummary.astro";
 import TestAccountLogin from "../../components/shop/TestAccountLogin.astro";
 import CheckoutForm from "../../components/shop/CheckoutForm.astro";
-import { products } from "../../data/products";
-
-const product = products[0];
-const currency = product.currency;
+import { shopConfig } from "../../data/shopConfig";
 ---
 
 <ShopLayout
@@ -23,7 +20,17 @@ const currency = product.currency;
         <div class="space-y-10">
           <TestAccountLogin />
 
-          <div class="border-t border-[var(--color-border)] pt-10">
+          <div id="empty-cart-warning" class="hidden border border-red-200 bg-red-50 p-6">
+            <p class="font-medium text-red-800">Dein Warenkorb ist leer.</p>
+            <p class="mt-1 text-sm text-red-700">
+              Füge zuerst ein Produkt hinzu, bevor du zur Kasse gehst.
+            </p>
+            <a href="/shop" class="mt-4 inline-block text-sm font-medium text-red-800 underline">
+              Zum Shop
+            </a>
+          </div>
+
+          <div id="checkout-form-wrapper" class="border-t border-[var(--color-border)] pt-10">
             <h2 class="mb-6 font-display text-2xl font-medium text-[var(--color-text)]">
               Lieferadresse
             </h2>
@@ -34,8 +41,8 @@ const currency = product.currency;
         <aside class="h-fit space-y-6">
           <CartSummary
             subtotal={0}
-            shipping={5.9}
-            currency={currency}
+            shipping={shopConfig.shipping}
+            currency={shopConfig.currency}
             readonly
           />
           <p class="text-xs leading-relaxed text-[var(--color-text-muted)]">
@@ -48,24 +55,27 @@ const currency = product.currency;
 </ShopLayout>
 
 <script>
-  import { getCartTotal } from "../../lib/cart";
+  import { getCart, getCartTotal } from "../../lib/cart";
+  import { formatPrice } from "../../lib/cartItemTemplate";
   import { processOrder } from "../../lib/checkout";
+  import { shopConfig } from "../../data/shopConfig";
 
   (function () {
+    const cart = getCart();
     const subtotal = getCartTotal();
-    const shipping = 5.9;
-    const total = subtotal + shipping;
+    const total = subtotal + shopConfig.shipping;
 
     const subtotalEl = document.getElementById("summary-subtotal");
     const totalEl = document.getElementById("summary-total");
-    if (subtotalEl) subtotalEl.textContent = formatPrice(subtotal, "EUR");
-    if (totalEl) totalEl.textContent = formatPrice(total, "EUR");
+    if (subtotalEl) subtotalEl.textContent = formatPrice(subtotal, shopConfig.currency);
+    if (totalEl) totalEl.textContent = formatPrice(total, shopConfig.currency);
 
-    function formatPrice(price: number, currency: string): string {
-      return new Intl.NumberFormat("de-DE", {
-        style: "currency",
-        currency,
-      }).format(price);
+    const emptyWarning = document.getElementById("empty-cart-warning");
+    const formWrapper = document.getElementById("checkout-form-wrapper");
+
+    if (cart.length === 0) {
+      emptyWarning?.classList.remove("hidden");
+      formWrapper?.classList.add("hidden");
     }
 
     const form = document.getElementById("checkout-form") as HTMLFormElement | null;
@@ -74,6 +84,11 @@ const currency = product.currency;
 
     form?.addEventListener("submit", (event) => {
       event.preventDefault();
+
+      if (cart.length === 0) {
+        window.location.href = "/shop/warenkorb";
+        return;
+      }
 
       if (!form.checkValidity()) {
         error?.classList.remove("hidden");

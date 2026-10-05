@@ -28,4 +28,5 @@ export interface ShopConfig {
     password: string;
   };
   currency: string;
+  shipping: number;
 }

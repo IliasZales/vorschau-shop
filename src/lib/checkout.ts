@@ -16,6 +16,12 @@ export interface OrderData {
 
 export function processOrder(formData: FormData): void {
   const cart = getCart();
+  if (cart.length === 0) {
+    console.warn("[Shop Preview] Checkout attempted with empty cart");
+    window.location.href = "/shop/warenkorb";
+    return;
+  }
+
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const order: OrderData = {

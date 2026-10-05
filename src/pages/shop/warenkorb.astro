@@ -1,11 +1,10 @@
 ---
 import ShopLayout from "../../layouts/ShopLayout.astro";
 import CartSummary from "../../components/shop/CartSummary.astro";
-import { products, formatPrice } from "../../data/products";
+import { products } from "../../data/products";
 import { shopConfig } from "../../data/shopConfig";
 
 const product = products[0];
-const currency = product.currency;
 ---
 
 <ShopLayout
@@ -43,8 +42,8 @@ const currency = product.currency;
         <aside class="h-fit">
           <CartSummary
             subtotal={0}
-            shipping={shopConfig.currency === "EUR" ? 5.9 : 0}
-            currency={currency}
+            shipping={shopConfig.shipping}
+            currency={shopConfig.currency}
             buttonHref="/shop/checkout"
             buttonText="Zur Kasse"
           />
@@ -56,18 +55,19 @@ const currency = product.currency;
 
 <script>
   import { getCart, updateQuantity, removeFromCart, getCartTotal, dispatchCartUpdate } from "../../lib/cart";
-  import type { CartItem } from "../../data/shopTypes";
+  import { renderCartItem, formatPrice } from "../../lib/cartItemTemplate";
+  import { shopConfig } from "../../data/shopConfig";
 
   (function () {
     const container = document.getElementById("cart-items");
     const emptyState = document.getElementById("cart-empty");
-    const summary = document.querySelector("aside [data-cart-summary]");
 
-    function formatPrice(price: number, currency: string): string {
-      return new Intl.NumberFormat("de-DE", {
-        style: "currency",
-        currency,
-      }).format(price);
+    function updateSummary(subtotal: number) {
+      const total = subtotal + shopConfig.shipping;
+      const subtotalEl = document.getElementById("summary-subtotal");
+      const totalEl = document.getElementById("summary-total");
+      if (subtotalEl) subtotalEl.textContent = formatPrice(subtotal, shopConfig.currency);
+      if (totalEl) totalEl.textContent = formatPrice(total, shopConfig.currency);
     }
 
     function render() {
@@ -82,38 +82,7 @@ const currency = product.currency;
 
       if (emptyState) emptyState.classList.add("hidden");
       if (container) {
-        container.innerHTML = cart
-          .map(
-            (item) => `
-          <li class="cart-item flex gap-5 py-6" data-id="${item.id}">
-            <a href="/shop/produkt/${item.slug}" class="h-24 w-24 flex-shrink-0 overflow-hidden bg-[var(--color-bg)]">
-              <img src="${item.image}" alt="${item.name}" class="h-full w-full object-cover" loading="lazy" />
-            </a>
-            <div class="flex flex-1 flex-col justify-between">
-              <div class="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <a href="/shop/produkt/${item.slug}" class="font-display text-lg font-medium text-[var(--color-text)] transition hover:text-[var(--color-accent)]">
-                    ${item.name}
-                  </a>
-                  <p class="text-sm text-[var(--color-text-muted)]">${formatPrice(item.price, item.currency)}</p>
-                </div>
-                <button type="button" class="remove-item text-sm text-[var(--color-text-muted)] underline decoration-[var(--color-border)] underline-offset-4 transition hover:text-red-600" aria-label="${item.name} entfernen">
-                  Entfernen
-                </button>
-              </div>
-              <div class="flex items-center justify-between">
-                <div class="flex items-center border border-[var(--color-border)] bg-[var(--color-surface)]">
-                  <button type="button" class="quantity-decrease px-3 py-2 text-[var(--color-text-muted)] transition hover:text-[var(--color-text)]" aria-label="Menge verringern">−</button>
-                  <span class="quantity-display min-w-[2rem] select-none text-center text-sm font-medium text-[var(--color-text)]">${item.quantity}</span>
-                  <button type="button" class="quantity-increase px-3 py-2 text-[var(--color-text-muted)] transition hover:text-[var(--color-text)]" aria-label="Menge erhöhen">+</button>
-                </div>
-                <p class="item-total text-base font-medium text-[var(--color-text)]">${formatPrice(item.price * item.quantity, item.currency)}</p>
-              </div>
-            </div>
-          </li>
-        `
-          )
-          .join("");
+        container.innerHTML = cart.map((item) => renderCartItem(item)).join("");
       }
 
       updateSummary(getCartTotal());
@@ -137,16 +106,6 @@ const currency = product.currency;
           removeFromCart(id);
         });
       });
-    }
-
-    function updateSummary(subtotal: number) {
-      const shipping = 5.9;
-      const total = subtotal + shipping;
-
-      const subtotalEl = document.getElementById("summary-subtotal");
-      const totalEl = document.getElementById("summary-total");
-      if (subtotalEl) subtotalEl.textContent = formatPrice(subtotal, "EUR");
-      if (totalEl) totalEl.textContent = formatPrice(total, "EUR");
     }
 
     render();

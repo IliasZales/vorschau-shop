@@ -7,36 +7,48 @@ interface Props {
 }
 
 const { images, alt } = Astro.props;
-const [mainImage, ...thumbnails] = images;
 ---
 
-<div class="space-y-4">
-  <div class="aspect-[4/5] overflow-hidden bg-[var(--color-bg)]">
-    <DynamicImage
-      id="product-main-image"
-      src={mainImage}
-      alt={alt}
-      width={800}
-      height={1000}
-      classes="h-full w-full object-cover"
-      loading="eager"
-    />
+<div class="space-y-4" data-product-gallery>
+  <div class="relative aspect-[4/5] overflow-hidden bg-[var(--color-bg)]">
+    {
+      images.map((image, index) => (
+        <div
+          class:list={[
+            "gallery-main absolute inset-0 transition-opacity duration-500",
+            index === 0 ? "opacity-100 z-10" : "opacity-0 z-0",
+          ]}
+          data-index={index}
+        >
+          <DynamicImage
+            src={image}
+            alt={index === 0 ? alt : `${alt} – Ansicht ${index + 1}`}
+            width={800}
+            height={1000}
+            classes="h-full w-full object-cover"
+            loading={index === 0 ? "eager" : "lazy"}
+          />
+        </div>
+      ))
+    }
   </div>
 
   {
-    thumbnails.length > 0 && (
+    images.length > 1 && (
       <div class="flex gap-3">
-        {thumbnails.map((image, index) => (
+        {images.map((image, index) => (
           <button
             type="button"
-            class="product-thumbnail aspect-square w-20 overflow-hidden border-2 border-transparent bg-[var(--color-bg)] transition hover:border-[var(--color-accent)] focus:border-[var(--color-accent)]"
-            data-image={image}
-            data-alt={`${alt} – Ansicht ${index + 2}`}
-            aria-label={`Ansicht ${index + 2} anzeigen`}
+            class:list={[
+              "gallery-thumbnail aspect-square w-20 overflow-hidden border-2 bg-[var(--color-bg)] transition",
+              index === 0 ? "border-[var(--color-accent)]" : "border-transparent hover:border-[var(--color-accent)]",
+            ]}
+            data-index={index}
+            aria-label={`Ansicht ${index + 1} anzeigen`}
           >
             <DynamicImage
               src={image}
-              alt={`${alt} – Ansicht ${index + 2}`}
+              alt={`${alt} – Ansicht ${index + 1}`}
               width={120}
               height={120}
               classes="h-full w-full object-cover"
@@ -50,19 +62,30 @@ const [mainImage, ...thumbnails] = images;
 
 <script>
   (function () {
-    const mainImage = document.getElementById("product-main-image") as HTMLImageElement | null;
-    const thumbnails = document.querySelectorAll<HTMLElement>(".product-thumbnail");
+    const galleries = document.querySelectorAll<HTMLElement>("[data-product-gallery]");
 
-    thumbnails.forEach((thumb) => {
-      thumb.addEventListener("click", () => {
-        if (!mainImage) return;
-        const newSrc = thumb.dataset.image;
-        const newAlt = thumb.dataset.alt;
-        if (newSrc) {
-          mainImage.src = newSrc;
-          mainImage.srcset = "";
-        }
-        if (newAlt) mainImage.alt = newAlt;
+    galleries.forEach((gallery) => {
+      const mains = gallery.querySelectorAll<HTMLElement>(".gallery-main");
+      const thumbs = gallery.querySelectorAll<HTMLElement>(".gallery-thumbnail");
+
+      thumbs.forEach((thumb) => {
+        thumb.addEventListener("click", () => {
+          const index = Number(thumb.dataset.index);
+
+          mains.forEach((main, mainIndex) => {
+            const isActive = mainIndex === index;
+            main.classList.toggle("opacity-100", isActive);
+            main.classList.toggle("z-10", isActive);
+            main.classList.toggle("opacity-0", !isActive);
+            main.classList.toggle("z-0", !isActive);
+          });
+
+          thumbs.forEach((t) => {
+            const isActive = t === thumb;
+            t.classList.toggle("border-[var(--color-accent)]", isActive);
+            t.classList.toggle("border-transparent", !isActive);
+          });
+        });
       });
     });
   })();

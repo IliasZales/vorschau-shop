@@ -7,4 +7,5 @@ export const shopConfig: ShopConfig = {
     password: "demo1234",
   },
   currency: "EUR",
+  shipping: 5.9,
 };
