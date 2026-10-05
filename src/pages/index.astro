@@ -1,0 +1,81 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="iZ Design Studio"
+  description="Webdesign und digitale Erlebnisse aus München. Entdecke unsere Shop-Vorschau."
+>
+  <section class="relative flex min-h-screen items-center px-6 pt-20 lg:px-8">
+    <div class="mx-auto max-w-7xl">
+      <div class="grid gap-12 lg:grid-cols-2 lg:items-center">
+        <div class="max-w-xl space-y-8">
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-accent)]">
+            iZ Design Studio
+          </p>
+          <h1 class="font-display text-5xl font-medium leading-[1.1] text-[var(--color-text)] md:text-7xl">
+            Digital mit Stil.
+          </h1>
+          <p class="text-lg leading-relaxed text-[var(--color-text-muted)]">
+            Wir gestalten Websites und Online-Shops, die nicht nur gut aussehen, sondern auch verkaufen. Schau dir unsere aktuelle Shop-Vorschau an.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <a
+              href="/shop"
+              class="inline-flex items-center justify-center bg-[var(--color-text)] px-8 py-4 text-sm font-medium uppercase tracking-wider text-white transition hover:bg-[var(--color-accent)]"
+            >
+              Shop-Vorschau öffnen
+            </a>
+            <a
+              href="/kontakt"
+              class="inline-flex items-center justify-center border border-[var(--color-text)] px-8 py-4 text-sm font-medium uppercase tracking-wider text-[var(--color-text)] transition hover:bg-[var(--color-text)] hover:text-white"
+            >
+              Projekt anfragen
+            </a>
+          </div>
+        </div>
+
+        <div class="relative aspect-[4/5] bg-[var(--color-surface)]">
+          <div class="absolute inset-0 flex items-center justify-center p-12">
+            <div class="text-center">
+              <p class="font-display text-6xl font-medium text-[var(--color-accent)] md:text-8xl">
+                iZ
+              </p>
+              <p class="mt-4 text-sm uppercase tracking-[0.3em] text-[var(--color-text-muted)]">
+                Shop Preview
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-[var(--color-border)] px-6 py-20 lg:px-8 lg:py-28">
+    <div class="mx-auto max-w-7xl">
+      <div class="grid gap-12 lg:grid-cols-3">
+        {
+          [
+            {
+              title: "Exklusives Design",
+              text: "Jeder Shop wird individuell gestaltet – keine Templates, keine Kompromisse.",
+            },
+            {
+              title: "Fokus auf Conversion",
+              text: "Von der Produktdarstellung bis zum Checkout optimieren wir für Verkäufe.",
+            },
+            {
+              title: "Technische Exzellenz",
+              text: "Schnell, barrierefrei und suchmaschinenfreundlich aufgebaut.",
+            },
+          ].map((item) => (
+            <div class="space-y-3">
+              <h2 class="font-display text-2xl font-medium text-[var(--color-text)]">{item.title}</h2>
+              <p class="leading-relaxed text-[var(--color-text-muted)]">{item.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>
